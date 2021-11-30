@@ -44,12 +44,46 @@ fun follow(path: Sequence<Dir>): Pos {
     }
 }
 
+fun adjecent(pos: Pos): Collection<Pos> {
+    return setOf(
+        Pos(pos.x - 1, pos.y - 1), // nw
+        Pos(pos.x + 1, pos.y - 1), // ne
+        Pos(pos.x + 2, pos.y), // e
+        Pos(pos.x - 1, pos.y + 1), // sw
+        Pos(pos.x + 1, pos.y + 1), // se
+        Pos(pos.x - 2, pos.y), // w
+    )
+}
+
+fun countNeighbors(pos: Pos, blackTiles: Set<Pos>): Int {
+    var result = 0
+    for (neighbor in adjecent(pos)) {
+        if (blackTiles.contains(neighbor)) {
+            result++
+        }
+    }
+
+    return result
+}
+
+fun tick(blackTiles: Set<Pos>): Set<Pos> {
+    val whiteTiles = (HashSet<Pos>(blackTiles)).flatMap { adjecent(it) }.filter { !blackTiles.contains(it) }.toSet()
+
+    return (blackTiles.filter {
+        val neighbors = countNeighbors(it, blackTiles)
+        neighbors == 1 || neighbors == 2
+    } + whiteTiles.filter {
+        val neighbors = countNeighbors(it, blackTiles)
+        neighbors == 2
+    }).toSet()
+}
+
 fun main() {
     val flips = File("input.txt")
         .readLines()
         .map { follow(parse(it)) }
 
-    val blackTiles = mutableSetOf<Pos>()
+    var blackTiles = mutableSetOf<Pos>()
 
     for (flip in flips) {
         if (blackTiles.contains(flip)) {
@@ -59,5 +93,8 @@ fun main() {
         }
     }
 
-    println(blackTiles.size)
+    for (i in 1..100) {
+        blackTiles = tick(blackTiles).toMutableSet()
+        println("Day $i: ${blackTiles.size}")
+    }
 }
