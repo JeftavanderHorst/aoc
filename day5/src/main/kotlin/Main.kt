@@ -14,5 +14,9 @@ fun id(string: String): Int {
 }
 
 fun main() {
-    println(File("input.txt").readLines().maxOf { id(it) })
+    val chairs = File("input.txt").readLines().map { id(it) }
+    val max = chairs.maxOrNull()!!
+    val candidates = (0..max).filter { !chairs.contains(it) }
+
+    println(candidates.last())
 }
