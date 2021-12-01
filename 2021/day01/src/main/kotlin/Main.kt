@@ -5,14 +5,16 @@ fun main() {
         .readLines()
         .map { it.toInt() }
 
-    var last = lines[0]
+    var last = lines[0] + lines[1] + lines[2]
     var increments = 0
-    for (i in 1 until lines.size) {
-        if (lines[i] > last) {
+    for (i in 2 until lines.size) {
+        val window = lines[i] + lines[i - 1] + lines[i - 2]
+
+        if (window > last) {
             increments++
         }
 
-        last = lines[i]
+        last = window
     }
 
     println(increments)
