@@ -22,23 +22,23 @@ int main() {
 
   // This pointer is incremented by one each tick, so that it always points to the current day
   // I.e. fishes[0] is always the day where fishes reproduce
-  auto fishes = new uint64_t[100] {0};
+  auto fishes = new uint64_t[300] {0};
 
   std::string substr;
   while (std::getline(input, substr, ',')) {
     fishes[std::stoi(substr)]++;
   }
 
-  PrintFishes(0, fishes);
+//  PrintFishes(0, fishes);
 
-  for (uint16_t day = 1; day <= 80; day++) {
+  for (uint16_t day = 1; day <= 256 ; day++) {
     fishes[7] += fishes[0];
     fishes[9] += fishes[0];
 
     // Move pointer
     fishes++;
 
-    PrintFishes(day, fishes);
+//    PrintFishes(day, fishes);
   }
 
   uint64_t number_of_fishes = 0;
