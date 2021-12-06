@@ -53,11 +53,16 @@ fun parseBoard(board: Int, string: String): List<RowOrColumn> {
 }
 
 fun play(sets: List<RowOrColumn>, inputs: List<Int>) {
+    val boardsThatWon = mutableSetOf<Int>()
+
     for (input in inputs) {
-        for (s in sets) {
+        println("Input: $input")
+        for (s in sets.filter { !boardsThatWon.contains(it.board) }) {
             s.numbers.remove(input)
             if (s.numbers.isEmpty()) {
-                println("Board ${s.board} wins")
+                println("Board ${s.board} won")
+
+                boardsThatWon.add(s.board)
 
                 val remainingValue = sets
                     .filter { it.board == s.board }
@@ -66,8 +71,6 @@ fun play(sets: List<RowOrColumn>, inputs: List<Int>) {
                     .sum()
 
                 println("Score: $remainingValue * $input = ${remainingValue * input}")
-
-                return
             }
         }
     }
