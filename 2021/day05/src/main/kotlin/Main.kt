@@ -1,6 +1,7 @@
 import java.io.File
-import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.max
+import kotlin.math.abs
 
 data class Pos(val x: Int, val y: Int)
 
@@ -12,13 +13,23 @@ fun parsePos(string: String): Pos {
 }
 
 fun trace(line: Line): List<Pos> {
-    if (line.from.y == line.to.y) {
-        // Horizontal line
-        return (min(line.to.x, line.from.x)..max(line.to.x, line.from.x)).map { Pos(it, line.from.y) }
+    val dx = abs(line.from.x - line.to.x)
+    val dy = line.from.y - line.to.y
+
+    if (dx == 0) {
+        // Vertical line
+        return (min(line.to.y, line.from.y)..max(line.to.y, line.from.y)).map { Pos(line.from.x, it) }
     }
 
-    // Vertical line
-    return (min(line.to.y, line.from.y)..max(line.to.y, line.from.y)).map { Pos(line.from.x, it) }
+    val slope = dy / dx
+
+    val range = when {
+        line.from.x < line.to.x -> line.from.x..line.to.x
+        line.from.x > line.to.x -> line.from.x downTo line.to.x
+        else -> throw Exception()
+    }
+
+    return range.withIndex().map { Pos(it.value, line.from.y - (slope * it.index)) }
 }
 
 fun main() {
@@ -26,7 +37,6 @@ fun main() {
         .readLines()
         .map { it.split(" -> ") }
         .map { Line(parsePos(it[0]), parsePos(it[1])) }
-        .filter { it.from.x == it.to.x || it.from.y == it.to.y }
         .flatMap { trace(it) }
 
     val tiles = mutableMapOf<Pos, Int>()
@@ -39,5 +49,5 @@ fun main() {
         tiles[pos] = tiles[pos]!! + 1
     }
 
-    println(tiles.count { it.value >= 2})
+    println(tiles.count { it.value >= 2 })
 }
