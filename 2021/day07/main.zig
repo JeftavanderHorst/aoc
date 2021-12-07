@@ -31,7 +31,10 @@ pub fn main() !void {
     while (candidate <= 2000) {
         var total_cost: u64 = 0;
         for (numbers.items) | number| {
-            total_cost += std.math.max(number, candidate) - std.math.min(number, candidate);
+            const distance = std.math.max(number, candidate) - std.math.min(number, candidate);
+            const fuel = distance * (distance + 1) / 2;
+
+            total_cost += fuel;
         }
 
         if (total_cost < best_candidate_fuel) {
