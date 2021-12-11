@@ -7,6 +7,9 @@ fun main() {
         .readLines()
         .map { line -> line.toCharArray().map { digit -> digit.digitToInt() }.toMutableList() }.toMutableList()
 
+    val octopusCount = grid.size * grid[0].size
+    println(octopusCount)
+
     fun inBounds(pos: Pos): Boolean = grid.indices.contains(pos.y) && grid[pos.y].indices.contains(pos.x)
 
     var flashes = 0
@@ -36,7 +39,10 @@ fun main() {
             }
     }
 
-    for (i in 1..100) {
+    var generation = 0
+    while (true) {
+        generation++
+
         for (y in grid.indices) {
             for (x in grid[y].indices) {
                 grid[y][x]++
@@ -55,8 +61,14 @@ fun main() {
             grid[p.y][p.x] = 0
         }
 
+        println("Generation $generation: ${updated.size} flashes")
+
+        if (updated.size >= octopusCount) {
+            break
+        }
+
         updated.clear()
     }
 
-    println("$flashes")
+    println("$generation")
 }
