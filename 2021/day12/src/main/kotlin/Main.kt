@@ -4,26 +4,34 @@ data class Edge(val from: String, val to: String)
 
 fun isUppercase(string: String) = string.uppercase() == string
 
-fun paths(edges: List<Edge>) = iterator<List<String>> {
-    fun traverse(i: Int, path: List<String>): Iterator<List<String>> = iterator<List<String>> {
-        val indent = "  ".repeat(i)
-        println("${indent}Traverse called with $path")
+fun mayBeVisited(node: String, path: List<String>): Boolean {
+    if (node == "start" || node == "end") {
+        return !path.contains(node)
+    }
 
+    if (isUppercase(node)) {
+        return true
+    }
+
+    // If the set of visited small caves is smaller than the list of those caves, at least one has been visited twice
+    val smallCaveVisitedTwice = path.filter { !isUppercase(it) }.toSet().size != path.filter { !isUppercase(it) }.size
+
+    if (path.contains(node) && smallCaveVisitedTwice) {
+        return false
+    }
+
+    return true
+}
+
+fun paths(edges: List<Edge>) = iterator {
+    fun traverse(i: Int, path: List<String>): Iterator<List<String>> = iterator {
         if (path.last() == "end") {
-            println("${indent}Is full path")
             yield(path)
         }
 
-        val possible =
-            edges.filter { edge -> edge.from == path.last() && (isUppercase(edge.to) || !path.contains(edge.to)) }
-
-        if (possible.isEmpty()) {
-            println("${indent}Dead end")
-        }
+        val possible = edges.filter { edge -> edge.from == path.last() && mayBeVisited(edge.to, path) }
 
         for (edge in possible) {
-            println("${indent}Traversing ${edge.from} -> ${edge.to}")
-
             yieldAll(traverse(i + 1, path + listOf(edge.to)))
         }
     }
@@ -47,10 +55,5 @@ fun main() {
         result.add(path)
     }
 
-    for (path in result) {
-        println("Path found: $path")
-    }
-
-    println()
     println("Found ${result.size} paths")
 }
