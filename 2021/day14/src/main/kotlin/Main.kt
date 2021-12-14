@@ -1,40 +1,52 @@
 import java.io.File
 
-data class Rule(val pattern: String, val created: Char)
-
 fun main() {
     val lines = File("input.txt").readLines()
 
-    var state = lines.first()
+    // Tracks how often each element occurs in polymer
+    val elements = lines
+        .first()
+        .toCharArray()
+        .groupBy { it }
+        .mapValues { it.value.size.toLong() }
+        .toMutableMap()
+
+    // How often each pair of elements occurs in polymer
+    val pairs = lines
+        .first()
+        .windowed(2)
+        .groupBy { it }
+        .mapValues { it.value.size.toLong() }
 
     val rules = lines
         .takeLastWhile { it.isNotEmpty() }
         .map { it.split(" -> ") }
-        .map { Rule(it[0], it[1].first()) }
+        .associate { it.first() to it.last()[0] }
 
-    println("Initial: $state")
+    (1..40).fold(pairs) { acc, _ ->
+        val result = mutableMapOf<String, Long>()
 
-    for (i in 1..10) {
-        state = state
-            .windowed(2, 1, true)
-            .joinToString("") {
-                var result = it
-                for (rule in rules) {
-                    if (it == rule.pattern) {
-                        result = "${rule.pattern.first()}${rule.created}"
-                        break
-                    }
-                }
-                result
+        for ((pair, count) in acc) {
+            val created = rules[pair]
+
+            if (created == null) {
+                result[pair] = count
+                break
             }
 
-        println("Done with step $i")
+            val left = "${pair.first()}$created"
+            val right = "$created${pair.last()}"
+
+            result[left] = (result[left] ?: 0) + count
+            result[right] = (result[right] ?: 0) + count
+
+            elements[created] = (elements[created] ?: 0) + count
+        }
+
+        result
     }
 
-    val elements = state.toCharArray().distinct().toSet()
-
-    val counts = elements.map { element -> state.toCharArray().count { it == element } }
-    val max = counts.maxOrNull()!!
-    val min = counts.minOrNull()!!
+    val max = elements.maxOf { it.value }
+    val min = elements.minOf { it.value }
     println("$max - $min = ${max - min}")
 }
