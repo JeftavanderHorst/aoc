@@ -1,0 +1,12 @@
+---
+Language: Cpp
+BasedOnStyle: Google
+ColumnLimit: 120
+SpaceBeforeCpp11BracedList: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+...
