@@ -83,7 +83,7 @@ int main() {
 
   LoadInput(grid, rule);
 
-  for (int i = 1; i <= 2; i++) {
+  for (int i = 1; i <= 50; i++) {
     ApplyRule(grid, rule);
   }
 
