@@ -7,6 +7,9 @@ fun main() {
             File("input.txt")
                     .readText()
                     .split("\n\n")
-                    .maxOfOrNull { elf -> elf.lines().sumOf { it.toInt() } }
+                    .map { elf -> elf.lines().sumOf { it.toInt() } }
+                    .sortedDescending()
+                    .take(3)
+                    .sum()
     )
 }
